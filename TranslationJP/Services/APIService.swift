@@ -1,7 +1,7 @@
 import Foundation
 
 class APIService {
-    private var model: String = "gpt-3.5-turbo"
+    private var model: String = "gpt-4"
     private var maxTokens: Int = 500
     
     func translate(text: String, mode: TranslationMode, completion: @escaping (String?, Error?) -> Void) {
@@ -87,14 +87,12 @@ extension TranslationMode {
     func message(text: String) -> (String, String) {
         switch self {
         case .formalJapanese:
-            return ("You are a helpful language assistant that translates English to formal Japanese. You can only output Japanese characters. The output should be natural Japanese",
-                "Write the following English text in formal Japanese without Romaji: '\(text)'. The format should be: xxxxx. Do not include Romaji")
+            return ("You are a helpful language assistant that translates English to polite Japanese. The output should be natural, polite Japanese. Please translate the following English text to polite Japanese without Romaji: '\(text)'.", "")
         case .casualJapanese:
-            return ("You are a helpful language assistant that translates English to friendly, casual Japanese. You can only output Japanese characters. The output should be expressive, natural Japanese",
-                "Write the following English text in casual and friendly Japanese without Romaji: '\(text)'. The format should be: xxxxx. Do not include Romaji")
+            return ("You are a helpful language assistant that translates English to conversational Japanese. The output should be natural, conversational Japanese. Please translate the following English text to conversational Japanese without Romaji: '\(text)'.", "")
         case .english:
-            return ("You are a helpful language assistant that translates Japanese to English. The output should be in natural English",
-                "Write the following Japanese text in English: '\(text)'. Do not include any other information, simply the translation.")
+            return ("You are a helpful language assistant that translates Japanese to English. The output should be in natural English. Please translate the following Japanese text to English: '\(text)'.", "")
         }
     }
 }
+
