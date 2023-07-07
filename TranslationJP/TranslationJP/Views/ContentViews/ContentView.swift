@@ -16,6 +16,7 @@ struct ContentView: View {
     @State private var isLoading: Bool = false
     @State private var selectedMode: TranslationMode = .formalJapanese
     @State private var enlargedTranslation: Translation?
+    @State private var isShowingEnlargedTranslation: Bool = false
     @State private var showLoading: Bool = false
     
     // API service instance
@@ -53,11 +54,15 @@ struct ContentView: View {
                 }
             }
         }
+        .sheet(isPresented: $isShowingEnlargedTranslation) {
+            EnlargedTranslationView(translation: enlargedTranslation?.translated ?? "", mode: enlargedTranslation?.mode ?? .formalJapanese)
+        }
     }
     
     // Submit action to translate the user's input
     func submitAction() {
         let inputText = userInput.trimmingCharacters(in: .whitespacesAndNewlines)
+        
         guard !inputText.isEmpty else { return }
 
         hideKeyboard()
@@ -70,7 +75,7 @@ struct ContentView: View {
 
                 switch result {
                 case .success(let translatedText):
-                    let newTranslation = Translation(original: inputText, translated: translatedText)
+                    let newTranslation = Translation(original: inputText, translated: translatedText, mode: selectedMode)
                     self.translations.append(newTranslation)
                     self.userInput = ""
                     
