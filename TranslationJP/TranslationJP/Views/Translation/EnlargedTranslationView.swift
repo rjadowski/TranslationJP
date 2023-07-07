@@ -1,5 +1,6 @@
 import SwiftUI
 
+// View to display enlarged translation text in a modal
 struct EnlargedTranslationView: View {
     let translation: String
     @Environment(\.presentationMode) var presentationMode

@@ -1,74 +1,109 @@
 import Foundation
 
+// Defines the structure of the API request parameters
+struct APIParameters: Codable {
+     let model: String
+     let messages:[Message]
+     let temperature: Double
+     let max_tokens: Int
+     let stop: [String]
+     
+     // Defines the structure of the message for API request
+     struct Message: Codable {
+         let role: String
+         let content: String
+     }
+}
+
+// Service to make API requests
 class APIService {
-    private var model: String = "gpt-4"
-    private var maxTokens: Int = 500
+    // Define the model and maximum tokens
+    private let model: String = "gpt-4"
+    private let maxTokens: Int = 500
     
-    func translate(text: String, mode: TranslationMode, completion: @escaping (String?, Error?) -> Void) {
+    // Define custom API errors
+    enum APIError: Error {
+        case keyNotFound, noData, unexpectedFormat, failedToSerializeJSON
+    }
+    
+    // Function to translate a given text based on the specified translation mode
+    func translate(text: String, mode: TranslationMode, completion: @escaping (Result<String, APIError>) -> Void) {
+        // Obtain API key from info dictionary, return error if not found
         guard let apiKey = Bundle.main.infoDictionary?["OPENAI_API_KEY"] as? String else {
-            completion(nil, NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "API key not found"]))
+            completion(.failure(.keyNotFound))
             return
         }
         
+        // Headers for the API request
         let headers = ["Authorization": "Bearer \(apiKey)",
                        "Content-Type": "application/json"]
         
-        let url = URL(string: "https://api.openai.com/v1/chat/completions")!
+        // API endpoint URL
+        guard let url = URL(string: "https://api.openai.com/v1/chat/completions") else {
+            return
+        }
         
+        // Messages for the API request body
         let (systemMessage, userMessage) = mode.message(text: text)
         
-        let body: [String: Any] = [
-            "model": model,
-            "messages": [
-                ["role": "system", "content": systemMessage],
-                ["role": "user", "content": userMessage]
-            ],
-            "temperature": 0.7,
-            "max_tokens": maxTokens,
-            "stop": ["User:", "AI:"]
-        ]
+        // Body of the API request
+        let body = APIParameters(model: model, messages: [
+            .init(role: "system", content: systemMessage),
+            .init(role: "user", content: userMessage)
+        ], temperature: 0.7, max_tokens: maxTokens, stop: ["User:", "AI:"])
         
+        // Create the API request
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.allHTTPHeaderFields = headers
         
+        // Try to encode the body into JSON format, return error if failed
         do {
-            guard let bodyData = try? JSONSerialization.data(withJSONObject: body, options: .fragmentsAllowed) else {
-                completion(nil, NSError(domain: "", code: -3, userInfo: [NSLocalizedDescriptionKey: "Failed to serialize JSON body"]))
+            let encoder = JSONEncoder()
+            request.httpBody = try encoder.encode(body)
+        } catch {
+            completion(.failure(.failedToSerializeJSON))
+            return
+        }
+        
+        // Make the API request
+        URLSession.shared.dataTask(with: request) { data, _, error in
+            // If an error occurs, return no data error
+            if let _ = error {
+                completion(.failure(.noData))
                 return
             }
             
-            request.httpBody = bodyData
-        }
-        
-        DispatchQueue.global(qos: .userInitiated).async {
-            URLSession.shared.dataTask(with: request) { data, _, error in
-                if let error = error {
-                    completion(nil, error)
+            // Check for existence of data, return error if not found
+            guard let data = data else {
+                completion(.failure(.noData))
+                return
+            }
+            
+            // Try to decode the API response, return error if failed
+            do {
+                let jsonResponse = try JSONDecoder().decode(APIResponse.self, from: data)
+                // Extract the translated message, return error if not found
+                guard let message = jsonResponse.choices.first?.message.content else {
+                    completion(.failure(.unexpectedFormat))
                     return
                 }
                 
-                guard let data = data else {
-                    completion(nil, NSError(domain: "", code: -2, userInfo: [NSLocalizedDescriptionKey: "No data received"]))
-                    return
+                // Return the translated message in the main queue
+                DispatchQueue.main.async {
+                    completion(.success(message))
                 }
                 
-                do {
-                    let jsonResponse = try JSONDecoder().decode(APIResponse.self, from: data)
-                    guard let message = jsonResponse.choices.first?.message.content else {
-                        completion(nil, NSError(domain: "", code: -2, userInfo: [NSLocalizedDescriptionKey: "Unexpected response format"]))
-                        return
-                    }
-                    
-                    completion(message, nil)
-                } catch {
-                    completion(nil, error)
+            } catch {
+                DispatchQueue.main.async {
+                    completion(.failure(.noData))
                 }
-            }.resume()
-        }
+            }
+        }.resume()
     }
 }
 
+// Extensions to define the structure of the API response
 extension APIService {
     struct APIResponse: Codable {
         let choices: [APIChoice]
@@ -83,6 +118,7 @@ extension APIService {
     }
 }
 
+// Extension to define the system and user messages based on the translation mode
 extension TranslationMode {
     func message(text: String) -> (String, String) {
         switch self {
@@ -95,4 +131,3 @@ extension TranslationMode {
         }
     }
 }
-
