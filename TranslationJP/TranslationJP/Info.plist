@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>OPENAI_API_KEY</key>
-	<string>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</string>
+	<string>ENTER_OPENAI_API_KEY_HERE</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
 	<string>We need to access your speech to convert text into audio.</string>
 	<key>UILaunchScreen</key>
