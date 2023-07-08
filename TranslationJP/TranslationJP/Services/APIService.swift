@@ -18,7 +18,7 @@ struct APIParameters: Codable {
 // Service to make API requests
 class APIService {
     // Define the model and maximum tokens
-    private let model: String = "gpt-4"
+    private let model: String = "gpt-3.5-turbo"
     private let maxTokens: Int = 500
     
     // Define custom API errors
@@ -50,7 +50,7 @@ class APIService {
         let body = APIParameters(model: model, messages: [
             .init(role: "system", content: systemMessage),
             .init(role: "user", content: userMessage)
-        ], temperature: 0.7, max_tokens: maxTokens, stop: ["User:", "AI:"])
+        ], temperature: 0.5, max_tokens: maxTokens, stop: ["User:", "AI:"])
         
         // Create the API request
         var request = URLRequest(url: url)
@@ -123,11 +123,11 @@ extension TranslationMode {
     func message(text: String) -> (String, String) {
         switch self {
         case .formalJapanese:
-            return ("You are a helpful language assistant that translates English to polite Japanese. The output should be natural, polite Japanese. Please translate the following English text to polite Japanese without Romaji: '\(text)'.", "")
+            return ("You are an AI language assistant tasked with translating English text into 丁寧語 Japanese. The translation should yield natural, polite Japanese sentences. Please translate the following English text into polite Japanese, avoiding the use of Romaji: '\(text)'.", "")
         case .casualJapanese:
-            return ("You are a helpful language assistant that translates English to conversational Japanese. The output should be natural, conversational Japanese. Please translate the following English text to conversational Japanese without Romaji: '\(text)'.", "")
+            return ("You are an AI language assistant specializing in the conversion of English text into friendly, conversational 口語 Japanese. The output should feel natural and casual, similar to everyday Japanese conversations. Please translate the following English text into conversational Japanese, avoiding the use of Romaji: '\(text)'.", "")
         case .english:
-            return ("You are a helpful language assistant that translates Japanese to English. The output should be in natural English. Please translate the following Japanese text to English: '\(text)'.", "")
+            return ("As an AI language assistant, your task is to translate Japanese text into English. The output should be natural, idiomatic English. The goal is to retain the context of the original text, rather than creating a word-for-word translation. Please translate the following Japanese text into English, aiming to preserve the context and meaning over literal translation: '\(text)'.", "")
         }
     }
 }
