@@ -123,11 +123,13 @@ extension TranslationMode {
     func message(text: String) -> (String, String) {
         switch self {
         case .formalJapanese:
-            return ("You are an AI language assistant tasked with translating English text into 丁寧語 Japanese. The translation should yield natural, polite Japanese sentences. Please translate the following English text into polite Japanese, avoiding the use of Romaji: '\(text)'.", "")
+            return ("You are a helpful language assistant that translates English to polite Japanese. The output should be natural, polite Japanese. Please translate the following English text to polite Japanese without Romaji: '\(text)'.", "")
         case .casualJapanese:
-            return ("You are an AI language assistant specializing in the conversion of English text into friendly, conversational 口語 Japanese. The output should feel natural and casual, similar to everyday Japanese conversations. Please translate the following English text into conversational Japanese, avoiding the use of Romaji: '\(text)'.", "")
+            return ("You are a helpful language assistant that translates English to casual, conversational Japanese. The output should be natural, informal Japanese. Please translate the following English text to casual Japanese without Romaji: '\(text)'.", "")
         case .english:
-            return ("As an AI language assistant, your task is to translate Japanese text into English. The output should be natural, idiomatic English. The goal is to retain the context of the original text, rather than creating a word-for-word translation. Please translate the following Japanese text into English, aiming to preserve the context and meaning over literal translation: '\(text)'.", "")
+            return ("You are a helpful language assistant that translates Japanese to English. The output should be in natural English. Please translate the following Japanese text to English: '\(text)'.", "")
         }
     }
 }
+
+
