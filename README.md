@@ -2,6 +2,13 @@
 
 ChatJPN is an iOS application that provides translations between English and Japanese in two modes - formal and casual. It uses OpenAI's GPT-3.5-turbo language model to provide the translations. The app is built with SwiftUI and Swift.
 
+https://github.com/rjadowski/TranslationJP/assets/37479245/d8bedda7-3490-4d55-9051-55df86ba4d25
+
+![image3](https://github.com/rjadowski/TranslationJP/assets/37479245/8564f9b8-086c-4069-abe0-083665ccb910)
+![image2](https://github.com/rjadowski/TranslationJP/assets/37479245/599c7b2d-e900-4bbf-b0ec-88092e0b0514)
+![image1](https://github.com/rjadowski/TranslationJP/assets/37479245/f52b2124-b153-4898-bcad-2746b401cc99)
+![image0](https://github.com/rjadowski/TranslationJP/assets/37479245/f88d423f-f02a-47ca-881f-213b3385b3eb)
+
 ## Features
 
 1. **Translation Modes**: Users can switch between formal and casual Japanese translations. They can also translate Japanese text into English.
