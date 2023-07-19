@@ -19,11 +19,8 @@ https://github.com/rjadowski/TranslationJP/assets/37479245/d8bedda7-3490-4d55-90
 
 **Note:** Please ensure you have the latest version of Xcode installed.
 
-## License
 
-This project is licensed under the terms of the MIT license. You are free to use, modify, and distribute the code as per the terms of this license. 
-
-Please note that using the OpenAI API requires agreeing to their usage terms and is separate from this project's license.
+Please note that using the OpenAI API requires agreeing to their usage terms.
 
 ## Author
 
